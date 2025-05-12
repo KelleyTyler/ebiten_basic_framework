@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/ebitenui/ebitenui"
+	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"golang.org/x/image/font/gofont/gomono"
@@ -30,6 +31,7 @@ type UI_Backend struct {
 	AudioSystem    *audio_system.Audio_System
 	Text_Faces_Src []*text.GoTextFaceSource
 	UI_Sounds      [][]byte
+	isinit         bool
 }
 
 func Get_UI_Backend(GSetting *settings.Game_Settings, aud_sys *audio_system.Audio_System) UI_Backend {
@@ -54,15 +56,27 @@ func Get_UI_Backend(GSetting *settings.Game_Settings, aud_sys *audio_system.Audi
 	bckend.Text_Faces_Src = append(bckend.Text_Faces_Src, tempTextSrc)
 
 	bckend.Init_UI_Sounds()
+	root := widget.NewContainer(
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
+	)
 
+	bckend.E_UI = &ebitenui.UI{
+		Container: root,
+	}
+
+	bckend.isinit = true
 	return bckend
 }
 
 func (ui_bckend *UI_Backend) Update() (err error) {
+	ui_bckend.E_UI.Update()
+
 	return err
 }
 
 func (ui_bckend *UI_Backend) Draw(screen *ebiten.Image) (err error) {
+	ui_bckend.E_UI.Draw(screen)
+
 	return err
 }
 
@@ -93,3 +107,10 @@ func (ui_bckend *UI_Backend) Play_UI_Sound(num int) (err error) {
 func (ui_bckend *UI_Backend) Play_Byte_Sound(bytes []byte) {
 	ui_bckend.AudioSystem.Play_Sound_FromBytes(bytes)
 }
+
+// /*
+//  */
+// func (ui_bckend *UI_Backend) Create_Own_Sound_System() (err error) {
+// 	ui_bckend.AudioSystem=
+// 	return err
+// }
